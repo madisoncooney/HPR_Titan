@@ -84,30 +84,19 @@ int toDeci(char *str, int base)
 bitset<4> NF_decimalToNibble(int n) {
 
   std::bitset<4> nibble;
-  unsigned int remainder, i = 1, step = 0, number_of_digits = 0;
-
-  long binaryNumber = 0;
 
 
-  if (n == 9) {
+  long long binaryNumber = 0;
+  int remainder = 0, i = 1, step = 0, number_of_digits = 0;
 
-      nibble.set(0,true);
-      nibble.set(1,false);
-      nibble.set(2,false);
-      nibble.set(3,true);
-
-  } else {
-
-    while (n!=0)
-      {
-      remainder = n%2;
-      n /= 2;
-      binaryNumber += remainder*i;
-      nibble.set(step,static_cast<bool>(binaryNumber));
-      i *= 10;
-      step += 1;
-     }
-
+  while (n!=0)
+  {
+    remainder = n%2;
+    n /= 2;
+    binaryNumber += remainder*i;
+    nibble.set(step,static_cast<bool>(remainder));
+    i *= 10;
+    step += 1;
   }
 
  return nibble;
@@ -118,16 +107,16 @@ bitset<4> NF_decimalToNibble(int n) {
 bitset<5> NF_decimalToNibble5(int n) {
 
   std::bitset<5> nibble;
-  unsigned int remainder, i = 1, step = 0, number_of_digits = 0;
+  int remainder, i = 1, step = 0, number_of_digits = 0;
 
-  long binaryNumber = 0;
+  long long binaryNumber = 0;
 
 
   while (n!=0){
     remainder = n%2;
     n /= 2;
     binaryNumber += remainder*i;
-    nibble.set(step,static_cast<bool>(binaryNumber));
+    nibble.set(step,static_cast<bool>(remainder));
     i *= 10;
     step += 1;
   }
@@ -140,16 +129,16 @@ bitset<5> NF_decimalToNibble5(int n) {
 bitset<3> NF_decimalToNibble3(int n) {
 
   std::bitset<3> nibble;
-  unsigned int remainder, i = 1, step = 0, number_of_digits = 0;
+  int remainder, i = 1, step = 0, number_of_digits = 0;
 
-  long binaryNumber = 0;
+  long long binaryNumber = 0;
 
 
   while (n!=0){
     remainder = n%2;
     n /= 2;
     binaryNumber += remainder*i;
-    nibble.set(step,static_cast<bool>(binaryNumber));
+    nibble.set(step,static_cast<bool>(remainder));
     i *= 10;
     step += 1;
   }
@@ -271,6 +260,20 @@ NFFrameControl NF_createFrameControl(char sensorN[], int feedN) {
 
 }
 
+//Send frame
+void NF_sendFrame(int byte) {
+
+  Serial.print(byte);
+
+};
+
+void NF_sendFrameTerminator(int byte) {
+
+  Serial.print(byte);
+  Serial.print(255);
+
+};
+
 //Frame -> char8, then send a 5 frame packet
 void NF_sendPacket(NFFrameControl control,NFFrameData data) {
 
@@ -283,25 +286,12 @@ void NF_sendPacket(NFFrameControl control,NFFrameData data) {
   NF_sendFrameTerminator(data.D.to_ulong());
 
   /*
-  cout << static_cast<char>(control.stream.to_ulong()) << endl;
-  cout << static_cast<char>(data.A.to_ulong()) << endl;
-  cout << static_cast<char>(data.B.to_ulong()) << endl;
-  cout << static_cast<char>(data.C.to_ulong()) << endl;
-  cout << static_cast<char>(data.D.to_ulong()) << endl;
+  cout << (control.stream.to_ulong()) << endl;
+  cout << (data.A.to_ulong()) << endl;
+  cout << (data.B.to_ulong()) << endl;
+  cout << (data.C.to_ulong()) << endl;
+  cout << (data.D.to_ulong()) << endl;
   */
-};
-
-//Send frame
-void NF_sendFrame(int byte) {
-
-  Serial.print(byte);
-
-};
-
-void NF_sendFrameTerminator(char byte[]) {
-
-  Serial.print(static_cast<char>(byte));
-
 };
 
 //Classes
