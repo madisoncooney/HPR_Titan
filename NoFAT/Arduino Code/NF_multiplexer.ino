@@ -7,12 +7,27 @@
   to a data transmission shield or computer
 
 */
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+#include <string>
+#include <sstream>
+#include <bitset>
+#include <cstdlib>
+#include <cstring>
+#include <vector>
+using namespace std;
 
 //List of sensors
 std::vector<Sensor> SensorList = {};
 
 void NF_tx_loop() //Main Loop
 {
+
+  long timer = 0;   //general purpose timer
+  long timer_old;
+  unsigned int counter = 0;
+
   if((millis()-timer)>=BCLK)  // Main loop runs at 50Hz, BCLK = 20
   {
     counter++;
@@ -24,7 +39,7 @@ void NF_tx_loop() //Main Loop
     //Reads the clock for each sensor and checks whether it should send data
     for (auto sensor = SensorList.begin(); sensor != SensorList.end(); ++sensor)
     {
-      if ((timer % (sensor.wait) == 0)
+      if (timer % (sensor.wait) == 0)
       {
         //Extract data from sensor
         void sensor.apiRead();

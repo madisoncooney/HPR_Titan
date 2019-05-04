@@ -6,6 +6,7 @@
 #include <bitset>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 using namespace std;
 
 
@@ -274,12 +275,12 @@ NFFrameControl NF_createFrameControl(char sensorN[], int feedN) {
 void NF_sendPacket(NFFrameControl control,NFFrameData data) {
 
 
-  NF_sendFrame(static_cast<char>(control.stream.to_ulong()));
+  NF_sendFrame(control.stream.to_ulong());
 
-  NF_sendFrame(static_cast<char>(data.A.to_ulong()));
-  NF_sendFrame(static_cast<char>(data.B.to_ulong()));
-  NF_sendFrame(static_cast<char>(data.C.to_ulong()));
-  NF_sendFrame(static_cast<char>(data.D.to_ulong()));
+  NF_sendFrame(data.A.to_ulong());
+  NF_sendFrame(data.B.to_ulong());
+  NF_sendFrame(data.C.to_ulong());
+  NF_sendFrameTerminator(data.D.to_ulong());
 
   /*
   cout << static_cast<char>(control.stream.to_ulong()) << endl;
@@ -291,9 +292,15 @@ void NF_sendPacket(NFFrameControl control,NFFrameData data) {
 };
 
 //Send frame
-void NF_sendFrame(char byte[]) {
+void NF_sendFrame(int byte) {
 
   Serial.print(byte);
+
+};
+
+void NF_sendFrameTerminator(char byte[]) {
+
+  Serial.print(static_cast<char>(byte));
 
 };
 
