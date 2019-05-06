@@ -355,7 +355,7 @@ public:
 
     float rawval = source();
     NFfloat nffloat = NF_floatToComponets(rawval);
-    NFFrameData = NF_createFrameData(nffloat.sign,nffloat.exponent,nffloat.significand,channel);
+    NFFrameData data = NF_createFrameData(nffloat.sign,nffloat.exponent,nffloat.significand,channel);
     NF_sendPacket(control,data);
 
   }
