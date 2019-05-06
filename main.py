@@ -37,15 +37,14 @@
 # Install VPython from http://vpython.org/contents/download_windows.html
 
 from vpython import *
-#import VPython
 import serial
 import string
 import math
-#import datetime as dt
+# import datetime as dt
 # from kivy.app import App
 # from kivy.uix.widget import Widget
-#import matplotlib
-#import matplotlib.pyplot as plt
+# import matplotlib
+# import matplotlib.pyplot as plt
 # import matplotlib.animation as animation
 
 from time import time
@@ -53,14 +52,14 @@ from time import time
 grad2rad = 3.141592 / 180.0
 
 # Check your COM port and baud rate
-ser = serial.Serial(port='COM10', baudrate=115200, timeout=1)
+ser = serial.Serial(port='COM8', baudrate=115200, timeout=1)
 
 # Main scene
 scene = canvas(title="Pololu MinIMU-9 + Arduino AHRS", resizable=False)
 scene.width = 500
 scene.y = 200
 
-#scene.range = (1.2, 1.2, 1.2)
+# scene.range = (1.2, 1.2, 1.2)
 # # scene.forward = (0,-1,-0.25)
 # scene.forward = vector(1, 0, -0.25)
 # scene.up = vector(0, 0, 1)
@@ -68,7 +67,6 @@ scene.y = 200
 # Second scene (Roll, Pitch, Yaw)
 scene2 = canvas(title='Pololu MinIMU-9 + Arduino AHRS', x=0, y=0, width=600, height=200, center=vector(5, 0, 0), background= color.black, resizable=False)
 #scene2.range = (1, 1, 1)
-
 
 scene2.select()
 # Roll, Pitch, Yaw
@@ -85,6 +83,10 @@ label(pos=vec(0, 1.4, 0), text="Roll", box=0)
 label(pos=vec(3, 1.4, 0), text="Pitch", box=0)
 label(pos=vec(6, 1.4, 0), text="Yaw", box=0)
 label(pos=vec(9, 1.4, 0), text='Alt', box=0)
+label(pos=vec(9, 0.6, 0), text='Lat', box=0)
+label(pos=vec(9, 0, 0), text='Lon', box=0)
+
+
 
 label(pos=vec(6, 0.5, 0), text="N", box=0, color=color.yellow)
 label(pos=vec(6, -1.5, 0), text="S", box=0, color=color.yellow)
@@ -101,6 +103,8 @@ L1 = label(pos=vector(0, 1, 0), text="-", box=0, opacity=0)
 L2 = label(pos=vector(3, 1, 0), text="-", box=0, opacity=0)
 L3 = label(pos=vector(6, 1, 0), text="-", box=0, opacity=0)
 L4 = label(pos=vector(9, 1, 0), text="-", box=0, opacity=0)
+L5 = label(pos=vector(9, -0.3, 0), text="-", box=0, opacity=0)
+L6 = label(pos=vector(9, -0.9, 0), text="-", box=0, opacity=0)
 
 # Main scene objects
 scene.select()
@@ -198,13 +202,21 @@ while 1:
         f.write(line3 + '\n')  # Write to the output log file
         print(line3)
 
-    if line.find('PS:') != -1:  # filter out incomplete (invalid) lines
+    if line.find('PRS:') != -1:  # filter out incomplete (invalid) lines
         line4 = line.replace("b'", '')
         line4 = line4.replace("\\r\\n'", '')
         f.write(line4 + '\n')  # Write to the output log file
         print(line4)
         line4 = line4.replace("PS:", '')  # Delete "PS:"
-        words_ps = line.split(",")  # Fields split
-        L4.text = str(float(words_ps[1])) + str("m")
+        words_prs = line4.split(",")  # Fields split
+        L4.text = str(float(words_prs[1])) + str("m")
+    if line.find('GPS:') != -1:
+        line5 = line.replace("b'", '')
+        line5 = line5.replace("\\r\\n'", '')
+        f.write(line5 + '\n')  # Write to the output log file
+        print(line5)
+        words_gps = line5.split(",")  # Fields split
+        L5.text = str(float(words_gps[2]))
+        L6.text = str(float(words_gps[1]))
 ser.close
 f.close

@@ -1,30 +1,30 @@
 /*
 
-MinIMU-9-Arduino-AHRS
-Pololu MinIMU-9 + Arduino AHRS (Attitude and Heading Reference System)
+  MinIMU-9-Arduino-AHRS
+  Pololu MinIMU-9 + Arduino AHRS (Attitude and Heading Reference System)
 
-Copyright (c) 2011-2016 Pololu Corporation.
-http://www.pololu.com/
+  Copyright (c) 2011-2016 Pololu Corporation.
+  http://www.pololu.com/
 
-MinIMU-9-Arduino-AHRS is based on sf9domahrs by Doug Weibel and Jose Julio:
-http://code.google.com/p/sf9domahrs/
+  MinIMU-9-Arduino-AHRS is based on sf9domahrs by Doug Weibel and Jose Julio:
+  http://code.google.com/p/sf9domahrs/
 
-sf9domahrs is based on ArduIMU v1.5 by Jordi Munoz and William Premerlani, Jose
-Julio and Doug Weibel:
-http://code.google.com/p/ardu-imu/
+  sf9domahrs is based on ArduIMU v1.5 by Jordi Munoz and William Premerlani, Jose
+  Julio and Doug Weibel:
+  http://code.google.com/p/ardu-imu/
 
-MinIMU-9-Arduino-AHRS is free software: you can redistribute it and/or modify it
-under the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation, either version 3 of the License, or (at your option)
-any later version.
+  MinIMU-9-Arduino-AHRS is free software: you can redistribute it and/or modify it
+  under the terms of the GNU Lesser General Public License as published by the
+  Free Software Foundation, either version 3 of the License, or (at your option)
+  any later version.
 
-MinIMU-9-Arduino-AHRS is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
-more details.
+  MinIMU-9-Arduino-AHRS is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+  more details.
 
-You should have received a copy of the GNU Lesser General Public License along
-with MinIMU-9-Arduino-AHRS. If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU Lesser General Public License along
+  with MinIMU-9-Arduino-AHRS. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
@@ -90,7 +90,7 @@ void Read_Gyro()
 
 void Baro_Init()
 {
-    if (!ps.init())
+  if (!ps.init())
   {
     Serial.println("Failed to autodetect pressure sensor!");
     while (1);
@@ -175,5 +175,31 @@ void Read_Compass()
   magnetom_y = SENSOR_SIGN[7] * compass.m.y;
   magnetom_z = SENSOR_SIGN[8] * compass.m.z;
 #endif
+}
+
+void GPS_Init()
+{
+  mySerial.begin(9600);
+  //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_ALLDATA);
+  //#define PMTK_SET_NMEA_OUTPUT_RMCGGA "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28"
+  //mySerial.println("$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0*28");
+  delay(100);
+  mySerial.write("$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n");
+  //GPS.sendCommand(PMTK_SET_NMEA_UPDATE_10HZ);
+  delay(100);
+  mySerial.write("$PMTK220,100*2F\r\n");
+  
+  delay(1000);
+}
+
+void Read_myGPS()
+{
+  //GPSdata[0] = (int)GPS.fix;
+  gpsSats = GPS.satellites.value();
+  gpsLat = GPS.location.lat();
+  gpsLng = GPS.location.lng();
+  gpsSpeed = GPS.speed.kmph();
+  gpsCourse = GPS.course.deg();
+  gpsAlt = GPS.altitude.meters();
 }
 
