@@ -77,7 +77,12 @@ def NF_rawToDatum(packet):
     # convert plain values to sensible data
 
     value = int(str(plain_B1) + str(plain_B2) + str(plain_C1) + str(plain_C2) + str(plain_D1) + str(plain_D2)) * 10 ** (plain_A2 - 5)
+    print(value)
 
     output = Datum(plain_sensor,plain_feed,plain_A1,value)
 
-    return output;
+    return output
+
+dataclass = NF_rawToDatum(bytes([80,178,86,87,101,255]))
+
+print(dataclass.sensor)

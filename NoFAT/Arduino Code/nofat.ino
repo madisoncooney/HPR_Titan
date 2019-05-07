@@ -85,7 +85,6 @@ bitset<4> NF_decimalToNibble(int n) {
 
   std::bitset<4> nibble;
 
-
   long long binaryNumber = 0;
   int remainder = 0, i = 1, step = 0, number_of_digits = 0;
 
