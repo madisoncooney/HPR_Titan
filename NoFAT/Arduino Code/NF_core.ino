@@ -43,6 +43,74 @@ struct NFfloat
 
 };
 
+//CLASSES
+class Sensor {
+
+public:
+  char *id;
+  bool enabled;
+  void (*apiRead)(); //Sensor.apiRead = &somefunction; ,, Function defined by sensor OEM that reads data from sensor
+  int freq; //Hz
+  int wait;
+  int feeds;
+
+  Sensor(char *identification, int desiredFeeds)
+  {
+
+    id = identification;
+    enabled = true;
+    freq = 50;
+    wait = ((1 / freq) * 1000);
+
+    feeds = desiredFeeds;
+
+    //Add itself to the sensorlist
+    SensorList.push_back(this);
+
+  }
+  addFeeds()
+  {
+
+    //Add feeds
+    for (int i = 0; i < feeds; i++) {
+
+      Feed i(this,i);
+
+    }
+  }
+
+};
+
+class Feed {
+
+public:
+  int id, channel;
+  float (*source)(); //Feed.source = &somefunction;  ,, Function defined by us that returns a single float from an apiFeed read
+  Sensor sensor;
+  NFFrameControl control;
+
+  Feed(Sensor parentSensor, int identification)
+  {
+
+    control = NF_createFrameControl(parentSensor.id,identification);
+
+    id = identification;
+    sensor = parentSensor;
+    channel = 1;
+
+  }
+
+  void transmit() {
+
+    float rawval = source();
+    NFfloat nffloat = NF_floatToComponets(rawval);
+    NFFrameData data = NF_createFrameData(nffloat.sign,nffloat.exponent,nffloat.significand,channel);
+    NF_sendPacket(control,data);
+
+  }
+
+};
+
 //TYPECAST OPERATORS
 //Base 32 -> Decimal functions
 int val(char c)
@@ -84,6 +152,7 @@ int toDeci(char *str, int base)
 bitset<4> NF_decimalToNibble(int n) {
 
   std::bitset<4> nibble;
+
 
   long long binaryNumber = 0;
   int remainder = 0, i = 1, step = 0, number_of_digits = 0;
@@ -291,74 +360,6 @@ void NF_sendPacket(NFFrameControl control,NFFrameData data) {
   cout << (data.C.to_ulong()) << endl;
   cout << (data.D.to_ulong()) << endl;
   */
-};
-
-//Classes
-class Sensor {
-
-public:
-  char *id;
-  bool enabled;
-  void (*apiRead)(); //Sensor.apiRead = &somefunction; ,, Function defined by sensor OEM that reads data from sensor
-  int freq; //Hz
-  int wait;
-  int feeds;
-
-  Sensor(char *identification, int desiredFeeds)
-  {
-
-    id = identification;
-    enabled = true;
-    freq = 50;
-    wait = ((1 / freq) * 1000);
-
-    feeds = desiredFeeds;
-
-    //Add itself to the sensorlist
-    SensorList.push_back(this);
-
-  }
-  addFeeds()
-  {
-
-    //Add feeds
-    for (int i = 0; i < feeds; i++) {
-
-      Feed i(this,i);
-
-    }
-  }
-
-};
-
-class Feed {
-
-public:
-  int id, channel;
-  float (*source)(); //Feed.source = &somefunction;  ,, Function defined by us that returns a single float from an apiFeed read
-  Sensor sensor;
-  NFFrameControl control;
-
-  Feed(Sensor parentSensor, int identification)
-  {
-
-    control = NF_createFrameControl(parentSensor.id,identification);
-
-    id = identification;
-    sensor = parentSensor;
-    channel = 1;
-
-  }
-
-  void transmit() {
-
-    float rawval = source();
-    NFfloat nffloat = NF_floatToComponets(rawval);
-    NFFrameData data = NF_createFrameData(nffloat.sign,nffloat.exponent,nffloat.significand,channel);
-    NF_sendPacket(control,data);
-
-  }
-
 };
 
 /*

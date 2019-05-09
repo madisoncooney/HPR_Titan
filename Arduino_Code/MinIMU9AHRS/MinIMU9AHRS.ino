@@ -1,6 +1,14 @@
+  //FRAMES
+  //NF data frame
+  struct NFFrameData
+  {
 
+    byte A;
+    byte B;
+    byte C;
+    byte D;
 
-/*
+  };
 
   MinIMU-9-Arduino-AHRS
   Pololu MinIMU-9 + Arduino AHRS (Attitude and Heading Reference System)
@@ -28,10 +36,12 @@
   You should have received a copy of the GNU Lesser General Public License along
   with MinIMU-9-Arduino-AHRS. If not, see <http://www.gnu.org/licenses/>.
 
-*/
+  int toDeci(char *str,int base) {
 
-// Uncomment the following line to use a MinIMU-9 v5 or AltIMU-10 v5. Leave commented for older IMUs (up through v4).
-#define IMU_V5
+    int len = strlen(str);
+    int power = 1; // Initialize power of base
+    int num = 0;  // Initialize result
+    int i;
 
 // Uncomment the below line to use this axis definition:
 // X axis pointing forward
@@ -50,47 +60,37 @@ int SENSOR_SIGN[9] = {1, 1, 1, -1, -1, -1, 1, 1, 1}; //Correct directions x,y,z 
 // Positive yaw : counterclockwise
 //int SENSOR_SIGN[9] = {1,-1,-1,-1,1,1,1,-1,-1}; //Correct directions x,y,z - gyro, accelerometer, magnetometer
 
-// tested with Arduino Uno with ATmega328 and Arduino Duemilanove with ATMega168
+      num += val(str[i]) * power;
+      power = power * base;
 
 #include <Wire.h>
 #include <SoftwareSerial.h>
 #include <TinyGPS++.h>
 
-// accelerometer: 8 g sensitivity
-// 3.9 mg/digit; 1 g = 256
-#define GRAVITY 256  //this equivalent to 1G in the raw data coming from the accelerometer
+    return num;
 
-#define ToRad(x) ((x)*0.01745329252)  // *pi/180
-#define ToDeg(x) ((x)*57.2957795131)  // *180/pi
+  }
 
-// gyro: 2000 dps full scale
-// 70 mdps/digit; 1 dps = 0.07
-#define Gyro_Gain_X 0.07 //X axis Gyro gain
-#define Gyro_Gain_Y 0.07 //Y axis Gyro gain
-#define Gyro_Gain_Z 0.07 //Z axis Gyro gain
-#define Gyro_Scaled_X(x) ((x)*ToRad(Gyro_Gain_X)) //Return the scaled ADC raw data of the gyro in radians for second
-#define Gyro_Scaled_Y(x) ((x)*ToRad(Gyro_Gain_Y)) //Return the scaled ADC raw data of the gyro in radians for second
-#define Gyro_Scaled_Z(x) ((x)*ToRad(Gyro_Gain_Z)) //Return the scaled ADC raw data of the gyro in radians for second
+  //NIBBLE OPERATORS
+  //Decimal to 4-bit nibble (VALUES: 0-15)
+  byte NF_decimalToNibble(int n) {
 
-// LSM303/LIS3MDL magnetometer calibration constants; use the Calibrate example from
-// the Pololu LSM303 or LIS3MDL library to find the right values for your board
+    byte nibble;
 
-#define M_X_MIN -2093
-#define M_Y_MIN -7434
-#define M_Z_MIN -286
-#define M_X_MAX +6050
-#define M_Y_MAX +382
-#define M_Z_MAX +7497
+    long long binaryNumber = 0;
+    int remainder = 0, i = 1, step = 0, number_of_digits = 0;
 
-#define Kp_ROLLPITCH 0.02
-#define Ki_ROLLPITCH 0.00002
-#define Kp_YAW 1.2
-#define Ki_YAW 0.00002
+    while (n!=0)
+    {
+      remainder = n%2;
+      n /= 2;
+      binaryNumber += remainder*i;
+      bitWrite(nibble,step,remainder);
+      i *= 10;
+      step += 1;
+    }
 
-/*For debugging purposes*/
-//OUTPUTMODE=1 will print the corrected data,
-//OUTPUTMODE=0 will print uncorrected data of the gyros (with drift)
-#define OUTPUTMODE 1
+    return nibble;
 
 #define PRINT_DCM 1    //Will print the whole direction cosine matrix
 #define PRINT_ANALOGS 1 //Will print the analog raw data
@@ -98,7 +98,8 @@ int SENSOR_SIGN[9] = {1, 1, 1, -1, -1, -1, 1, 1, 1}; //Correct directions x,y,z 
 #define PRINT_PS 1      //Will print the pressure, tempurature and altitude
 #define PRINT_GPS 1      //Will print the GPS
 
-#define STATUS_LED 13
+  //Joins two 4-bit nibbles
+  byte NF_joinNibble(byte n1, byte n2) {
 
 float G_Dt = 0.02;  // Integration time (DCM algorithm)  We will run the integration loop at 50Hz if possible
 
@@ -108,23 +109,16 @@ long timer24 = 0; //Second timer used to print values
 int AN[6]; //array that stores the gyro and accelerometer data
 int AN_OFFSET[6] = {0, 0, 0, 0, 0, 0}; //Array that stores the Offset of the sensors
 
-int gyro_x;
-int gyro_y;
-int gyro_z;
-int accel_x;
-int accel_y;
-int accel_z;
-int magnetom_x;
-int magnetom_y;
-int magnetom_z;
-float c_magnetom_x;
-float c_magnetom_y;
-float c_magnetom_z;
-float MAG_Heading;
+    bitWrite(newbyte,7,bitRead(n1,3));
+    bitWrite(newbyte,6,bitRead(n1,2));
+    bitWrite(newbyte,5,bitRead(n1,1));
+    bitWrite(newbyte,4,bitRead(n1,0));
+    bitWrite(newbyte,3,bitRead(n2,3));
+    bitWrite(newbyte,2,bitRead(n2,2));
+    bitWrite(newbyte,1,bitRead(n2,1));
+    bitWrite(newbyte,0,bitRead(n2,0));
 
-float pressure;
-float altitude;
-float temperature;
+    return newbyte;
 
 float Accel_Vector[3] = {0, 0, 0}; //Store the acceleration in a vector
 float Gyro_Vector[3] = {0, 0, 0}; //Store the gyros turn rate in a vector
@@ -164,6 +158,7 @@ float DCM_Matrix[3][3] = {
 };
 float Update_Matrix[3][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}}; //Gyros here
 
+    return newbyte;
 
 float Temporary_Matrix[3][3] = {
   {
@@ -284,6 +279,46 @@ void loop() //Main Loop
     printdata();
 
   }
+
+  //Send frame
+  void NF_sendFrame(byte byte) {
+
+    Serial.println(byte);
+
+  }
+
+  void NF_sendFrameTerminator() {
+
+    Serial.println(255);
+
+  }
+
+  //Frame -> char8, then send a 6 frame packet
+  void NF_sendPacket(NFFrameControl control,NFFrameData data) {
+
+
+    NF_sendFrame(control.stream);
+
+    NF_sendFrame(data.A);
+    NF_sendFrame(data.B);
+    NF_sendFrame(data.C);
+    NF_sendFrame(data.D);
+
+    NF_sendFrameTerminator();
+
+    /*
+    cout << (control.stream.to_ulong()) << endl;
+    cout << (data.A.to_ulong()) << endl;
+    cout << (data.B.to_ulong()) << endl;
+    cout << (data.C.to_ulong()) << endl;
+    cout << (data.D.to_ulong()) << endl;
+    */
+  }
+
+
+void setup() {
+
+  Serial.begin(115200);
 
 }
 

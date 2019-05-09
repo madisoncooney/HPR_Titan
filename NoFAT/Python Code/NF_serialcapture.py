@@ -1,12 +1,10 @@
 from bitstring import BitArray, BitStream
 import base64
-import binascii
 import datetime
 
 import serial
-import NF_interpreter #todo: turn interpreter into a module
 
-ser = serial.Serial(port='COM10', baudrate=115200, timeout=1)
+ser = serial.Serial(port='COM03', baudrate=115200, timeout=1)
 
 # Open port and start writing data
 ser.open()

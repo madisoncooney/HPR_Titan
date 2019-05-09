@@ -252,3 +252,21 @@ void Acc_Print()
 
 
 }
+
+void gyro_x() {
+
+  return (static_cast<float>(gyro_acc.g.x));
+
+}
+
+void gyro_y() {
+
+  return (static_cast<float>(gyro_acc.g.y));
+
+}
+
+void gyro_z() {
+
+  return (static_cast<float>(gyro_acc.g.z));
+
+}
