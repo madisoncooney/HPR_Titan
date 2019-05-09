@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Flight Path</name><snippet>Created with the MCW HPR KML Creator v1.00 at 8/05/2019 12:17:06 AM</snippet><Style id="multitrack"><IconStyle><Icon /></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style><Style id="fs_1_Split"><LineStyle><color>FFFFFFFF</color><width>4</width></LineStyle><PolyStyle><color>FF0000FF</color></PolyStyle></Style><LookAt><longitude>145.8350917</longitude><latitude>-38.20882433</latitude><range>1300</range></LookAt><Placemark><name>Split 1</name><styleUrl>#fs_1_Split</styleUrl><LineString><extrude>1</extrude><tessellate>1</tessellate><altitudeMode>absolute</altitudeMode><coordinates>145.8347914,-38.207827,200
+145.072693,-37.866852,200
+</coordinates></LineString></Placemark></Document></kml>

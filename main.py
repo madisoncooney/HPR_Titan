@@ -124,14 +124,6 @@ platform = box(length=1, height=1, width=1, color=color.blue)
 p_line = box(length=1, height=0.08, width=0.5, color=color.yellow)
 plat_arrow = arrow(color=color.green, axis=vector(1, 0, 0), shaftwidth=0.06, fixedwidth=1)
 
-# Plot Test
-# Create figure for plotting
-# fig = plt.figure()
-# ax = fig.add_subplot(1, 1, 1)
-# xs = []
-# ys = []
-
-
 f = open("Serial" + str(time()) + ".txt", 'w')
 
 roll = float(0)

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Flight Path</name><snippet>Created with the MCW HPR KML Creator v1.00 at 8/05/2019 12:17:06 AM</snippet><Style id="multitrack"><IconStyle><Icon /></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style><Style id="fs_1_Split"><LineStyle><color>FFFFFFFF</color><width>4</width></LineStyle><PolyStyle><color>FF0000FF</color></PolyStyle></Style><LookAt><longitude>145.83567380398085</longitude><latitude>-38.201547318001545</latitude><altitude>441.35091428394776</altitude><range>1000</range><tilt>45</tilt></LookAt><Placemark><name>CurrentLoc</name><styleUrl>#fs_1_Split</styleUrl><LineString><extrude>1</extrude><tessellate>1</tessellate><altitudeMode>absolute</altitudeMode><coordinates>145.8347914,-38.207827,200
+145.8442421915718,-38.201472833968204,225.1271243498049
+145.839595735001,-38.20667733701784,288.2518778191635
+145.83773394267135,-38.20252667940163,299.9221949728167
+145.8412096659809,-38.20564935229203,287.7246740448195
+145.8353439248513,-38.20304541294979,208.4044825597688
+145.83538826917987,-38.20127451663149,221.3175451387599
+145.83798143986382,-38.20646565709527,202.97833142021753
+145.83892393207148,-38.20164003997662,228.6431699330046
+145.844779284682,-38.2012101188583,249.0430691016299
+145.83567380398085,-38.201547318001545,241.3509142839478</coordinates></LineString></Placemark></Document></kml>
