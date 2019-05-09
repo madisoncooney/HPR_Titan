@@ -86,3 +86,4 @@ for i in range(10):
     gps_coords = [str(curr_longitude + random.random()/100), str(curr_latitude + random.random()/100), str(curr_altitude + random.random()*100)]
     gps_string = ",".join(gps_coords)  # convert whole thing to string
     kmlparser.parsekml(timestr, gps_coords, tree)
+    time.sleep(1)
