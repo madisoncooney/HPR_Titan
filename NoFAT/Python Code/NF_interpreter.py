@@ -64,7 +64,7 @@ def NF_rawToDatum(packet):
     plain_feed = int(nib_feed, 2)
 
     plain_A1 = int(nib_A1, 2)
-    plain_A2 = int(nib_A2, 2) - 3
+    plain_A2 = (int(nib_A2, 2)) - 5
 
     plain_B1 = int(nib_B1, 2)
     plain_B2 = int(nib_B2, 2)
@@ -82,7 +82,7 @@ def NF_rawToDatum(packet):
 
     #see sensible data
 
-    value = int(str(plain_B1) + str(plain_B2) + str(plain_C1) + str(plain_C2) + str(plain_D1) + str(plain_D2)) * 10 ** (plain_A2 - 2)
+    value = int(str(plain_B1) + str(plain_B2) + str(plain_C1) + str(plain_C2) + str(plain_D1) + str(plain_D2)) * 10 ** (plain_A2)
 
     output = Datum(plain_sensor,plain_feed,plain_A1,value,plain_terminator)
 

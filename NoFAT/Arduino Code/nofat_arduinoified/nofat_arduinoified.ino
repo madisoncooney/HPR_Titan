@@ -160,7 +160,7 @@ NFfloat NF_floatToComponents(float f) {
   buffer.significand6 = significand6;
 
   //Fix exponentiation overflow
-  exponent = static_cast<uint8_t>(exponent);
+  exponent = (exponent);
   
   if (exponent < -7) {
 
@@ -268,7 +268,7 @@ void setup() {
 
 void loop() {
 
-  float floatval = 6753560000;
+  float floatval = 12.3456;
   NFfloat finalinput = NF_floatToComponents(floatval);
 
   NFFrameData dataframe = NF_createFrameData(finalinput.sign,finalinput.exponent,finalinput.significand1,finalinput.significand2,finalinput.significand3,finalinput.significand4,finalinput.significand5,finalinput.significand6,1);
