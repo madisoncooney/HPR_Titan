@@ -27,8 +27,6 @@ float tempC;
 #define RXRFD 17
 
 
-
-
 //------------------------------------------------------------
 // This object parses received characters
 //   into the gps.fix() data structure
