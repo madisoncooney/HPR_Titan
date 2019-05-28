@@ -17,7 +17,7 @@ def parsekml(timestring, current_gps, tree):
     # accesses the look at section of the KML and tells the camera to look at the most recent GPS coord
     root[0][4][0].text = current_gps[0]
     root[0][4][1].text = current_gps[1]
-    root[0][4][2].text = str(float(current_gps[2]) + 200)
+    root[0][4][2].text = str(float(current_gps[2]))
 
     # write new root to tree
     tree = ET.ElementTree(root)

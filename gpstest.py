@@ -19,19 +19,39 @@ import serial
 #         line = line.replace("\\r\\n'", '')
 #         words_GPRMC = line.split(",")
 #         print(line)
-import os
+
 import time
 import xml.etree.ElementTree as ET
 import kmlparser
-import random
+
+curr_longitude = 0
+curr_latitude = 0
+curr_altitude = 0
 ET.register_namespace("","http://www.opengis.net/kml/2.2")
-
 timestr = time.strftime("%d%m%Y-%H%M")
-
+f = open("Serial-" + timestr + ".txt", 'w')
+f.write("DMY-HMS,altitude(cm),latitude 10sig, longitude 10sig, speed (mkn), heading 100ths deg\n")
+print("DMY-HMS,altitude(cm),latitude 10sig, longitude 10sig, speed (mkn), heading 100ths deg")
 # lon, lat, alt
-curr_longitude = 145.8347914
-curr_latitude = -38.207827
-curr_altitude = 200
+
+ser = serial.Serial(port='COM12', baudrate=115200, timeout=1)
+
+while curr_latitude == 0:
+    line = str(ser.readline())
+    if line.find('GPS:') != -1:
+        line = line.replace("b'GPS:", '')
+        # line = line.replace(",\n'", '')
+        f.write(line + '\n')  # Write to the output log file
+
+        words_gps = line.split(",")  # Fields split
+        if len(words_gps) == 6:
+            if int(words_gps[2]) != 0:
+                print(line)
+                curr_latitude = int(words_gps[2])/10000000  # lat
+                curr_longitude = int(words_gps[3])/10000000  # long
+                curr_altitude = int(words_gps[1])/100  # altitude
+                break
+
 gps_coords = [str(curr_longitude), str(curr_latitude), str(curr_altitude)]
 gps_string = ",".join(gps_coords) # convert whole thing to string
 
@@ -82,7 +102,21 @@ tree = ET.ElementTree(ET.fromstring(kmlstring))
 tree.write(timestr+'.kml', xml_declaration=True, encoding="UTF-8")
 tree.write('NetWork_Current.kml', xml_declaration=True, encoding="UTF-8")
 
-for i in range(10):
-    gps_coords = [str(curr_longitude + random.random()/100), str(curr_latitude + random.random()/100), str(curr_altitude + random.random()*100)]
-    gps_string = ",".join(gps_coords)  # convert whole thing to string
-    kmlparser.parsekml(timestr, gps_coords, tree)
+# for i in range(10):
+
+
+while 1:
+    line = str(ser.readline())
+
+    if line.find('GPS:') != -1:
+        line = line.replace("b'GPS:", '')
+        # line = line.replace(",\n'", '')
+        f.write(line + '\n')  # Write to the output log file
+        print(line)
+        words_gps = line.split(",")  # Fields split
+        if len(words_gps) == 6:
+            curr_latitude = int(words_gps[2])/10000000  # lat
+            curr_longitude = int(words_gps[3])/10000000  # long
+            curr_altitude = int(words_gps[1])/100  # altitude
+            gps_coords = [str(curr_longitude), str(curr_latitude), str(curr_altitude)]
+            kmlparser.parsekml(timestr, gps_coords, tree)
